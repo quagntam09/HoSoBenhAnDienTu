@@ -137,7 +137,6 @@ namespace HoSoBenhAnDienTu.Controllers
             if (!KiemTraQuyen()) return RedirectToAction("Login", "Account");
             int maHoSo = (int)Session["MaHoSo"];
 
-            // Sử dụng View SQL để có sẵn trạng thái 'Sắp tái khám'
             var lichSu = db.View_TongHopLichSuKham
                            .Where(x => x.MaHoSo == maHoSo)
                            .OrderByDescending(x => x.NgayKham)
@@ -196,6 +195,30 @@ namespace HoSoBenhAnDienTu.Controllers
                     return RedirectToAction("HoSoCaNhan");
                 }
             }
+            catch (System.Data.Entity.Infrastructure.DbUpdateException dbEx) 
+            {
+                Exception raise = dbEx;
+                foreach (var exception in dbEx.Entries)
+                {
+                }
+
+                var sqlEx = dbEx.InnerException?.InnerException as System.Data.SqlClient.SqlException;
+                if (sqlEx != null)
+                {
+                    if (sqlEx.Number == 547) 
+                    {
+                        ModelState.AddModelError("", "Dữ liệu không hợp lệ (Ví dụ: Chiều cao/Cân nặng phải lớn hơn 0).");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Lỗi CSDL: " + sqlEx.Message);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Lỗi cập nhật dữ liệu.");
+                }
+            }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
@@ -221,14 +244,22 @@ namespace HoSoBenhAnDienTu.Controllers
         {
             if (KiemTraQuyen() && Session["MaHoSo"] != null)
             {
-                var nk = new NhatKySucKhoe();
-                nk.MaHoSo = (int)Session["MaHoSo"];
-                nk.NgayGhi = DateTime.Now;
-                nk.TrieuChung = trieuChung;
-                nk.ChiSoTuDo = chiSoTuDo;
+                try
+                {
+                    var nk = new NhatKySucKhoe();
+                    nk.MaHoSo = (int)Session["MaHoSo"];
+                    nk.NgayGhi = DateTime.Now;
+                    nk.TrieuChung = trieuChung;
+                    nk.ChiSoTuDo = chiSoTuDo;
 
-                db.NhatKySucKhoe.Add(nk);
-                db.SaveChanges();
+                    db.NhatKySucKhoe.Add(nk);
+                    db.SaveChanges();
+                    TempData["SuccessMessage"] = "Ghi nhật ký thành công!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Lỗi khi lưu nhật ký: " + ex.Message;
+                }
             }
             return RedirectToAction("NhatKySucKhoe");
         }
