@@ -1,0 +1,44 @@
+﻿@model IEnumerable<HoSoBenhAnDienTu.Models.NhatKySucKhoe>
+@{ ViewBag.Title = "Nhật ký sức khỏe"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading"><h3 class="panel-title">Hôm nay bạn thấy thế nào?</h3></div>
+                <div class="panel-body">
+                    <form action="/BenhNhan/GhiNhatKy" method="post">
+                        <div class="form-group">
+                            <label>Triệu chứng / Cảm giác:</label>
+                            <textarea name="trieuChung" class="form-control" rows="3" placeholder="Ví dụ: Đau đầu nhẹ, ăn không ngon..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Chỉ số tự đo (nếu có):</label>
+                            <input type="text" name="chiSoTuDo" class="form-control" placeholder="VD: Huyết áp 120/80, Nhiệt độ 37">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Lưu Nhật ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h3>Lịch sử Ghi chú</h3>
+            @foreach (var nk in Model)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>@nk.NgayGhi.Value.ToString("dd/MM/yyyy HH:mm")</strong>
+                    </div>
+                    <div class="panel-body">
+                        <p><strong>Triệu chứng:</strong> @nk.TrieuChung</p>
+                        @if (!string.IsNullOrEmpty(nk.ChiSoTuDo))
+                        {
+                            <p class="text-info"><strong>Chỉ số đo được:</strong> @nk.ChiSoTuDo</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

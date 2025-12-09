@@ -1,0 +1,65 @@
+﻿@model HoSoBenhAnDienTu.Models.HoSoNguoiDung
+
+@{
+    ViewBag.Title = "Cập nhật Thông tin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0"><i class="fas fa-user-edit"></i> Cập nhật Hồ sơ Sức khỏe</h3>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.MaHoSo)
+                        @Html.HiddenFor(m => m.MaTaiKhoan)
+                        @Html.HiddenFor(m => m.HoTen) <div class="alert alert-info">
+                            <strong>Lưu ý:</strong> Việc cập nhật <em>Chiều cao</em> và <em>Cân nặng</em> chính xác sẽ giúp hệ thống tính toán chỉ số BMI và đưa ra cảnh báo sức khỏe đúng nhất.
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label">Họ và Tên:</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" value="@Model.HoTen" disabled readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label">Số điện thoại:</label>
+                            <div class="col-sm-8">
+                                @Html.EditorFor(m => m.SoDienThoaiLienHe, new { htmlAttributes = new { @class = "form-control" } })
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h5 class="text-primary">Chỉ số cơ thể hiện tại</h5>
+
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label">Chiều cao (cm):</label>
+                            <div class="col-sm-8">
+                                @Html.EditorFor(m => m.ChieuCaoCoDinh, new { htmlAttributes = new { @class = "form-control", @type = "number", @step = "0.1" } })
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-sm-4 col-form-label">Cân nặng (kg):</label>
+                            <div class="col-sm-8">
+                                @Html.EditorFor(m => m.CanNangHienTai, new { htmlAttributes = new { @class = "form-control", @type = "number", @step = "0.1" } })
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <a href="@Url.Action("HoSoCaNhan", "BenhNhan")" class="btn btn-secondary">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Lưu thay đổi</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

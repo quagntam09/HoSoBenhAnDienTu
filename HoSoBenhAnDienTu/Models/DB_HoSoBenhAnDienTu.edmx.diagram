@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2e6e0c5745c044fc96c05950226b9966" Name="Diagram1">
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.ChiSoKham" Width="1.5" PointX="9.75" PointY="15" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.DiUng" Width="1.5" PointX="7.5" PointY="5.375" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.DonThuoc" Width="1.5" PointX="9.75" PointY="11.5" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.HoSoNguoiDung" Width="1.5" PointX="5.25" PointY="16" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.LanKham" Width="1.5" PointX="7.5" PointY="14.375" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.LichSuPhauThuat" Width="1.5" PointX="7.5" PointY="31.375" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.LichSuTiemChung" Width="1.5" PointX="7.5" PointY="21.625" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.NhatKySucKhoe" Width="1.5" PointX="7.5" PointY="2.375" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.TaiKhoan" Width="1.5" PointX="3" PointY="16.75" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.TaiLieuKham" Width="1.5" PointX="9.75" PointY="18.5" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.TienSuBenh" Width="1.5" PointX="7.5" PointY="8.5" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.TienSuGiaDinh" Width="1.5" PointX="7.5" PointY="25.125" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.TheBaoHiem" Width="1.5" PointX="7.5" PointY="28.125" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.VaiTro" Width="1.5" PointX="0.75" PointY="17.25" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.View_BieuDoSucKhoe" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.View_CanhBaoSucKhoe" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.View_LichSuDungThuoc" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.View_TongHopLichSuKham" Width="1.5" PointX="4.75" PointY="0.75" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__ChiSoKham__MaLan__4D94879B" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__DiUng__MaHoSo__6A30C649" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__DonThuoc__MaLanK__5070F446" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__HoSoNguoi__MaTai__403A8C7D" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__LanKham__MaHoSo__49C3F6B7" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__LichSuPha__MaHoS__02FC7413" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__LichSuTie__MaHoS__571DF1D5" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__NhatKySuc__MaHoS__6FE99F9F" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__TienSuBen__MaHoS__45F365D3" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__TienSuGia__MaHoS__6D0D32F4" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__TheBaoHie__MaHoS__4316F928" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__TaiLieuKh__MaLan__05D8E0BE" />
+        <AssociationConnector Association="HoSoSucKhoeCaNhan_FullModel.FK__TaiKhoan__MaVaiT__3A81B327" />
+        <EntityTypeShape EntityType="HoSoSucKhoeCaNhan_FullModel.DanhMucThuoc" Width="1.5" PointX="0.75" PointY="6.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

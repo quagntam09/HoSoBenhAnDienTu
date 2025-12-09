@@ -1,0 +1,313 @@
+﻿@model HoSoBenhAnDienTu.Models.HoSoTongQuatViewModel
+@{
+    ViewBag.Title = "Hồ sơ sức khỏe cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* CSS Tùy chỉnh */
+    .profile-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+        background: white;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+        padding: 30px;
+        text-align: center;
+        color: white;
+    }
+
+    .avatar-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background-color: #f8f9fa;
+        margin-bottom: 15px;
+    }
+
+    .sidebar-menu .list-group-item {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        color: #555;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+        .sidebar-menu .list-group-item:hover {
+            background-color: #f0f2f5;
+            color: #0d6efd;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu .list-group-item.active {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+            font-weight: bold;
+        }
+
+        .sidebar-menu .list-group-item i {
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+        height: 100%;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .feature-icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .bg-light-primary {
+        background-color: #e7f1ff;
+        color: #0d6efd;
+    }
+
+    .bg-light-success {
+        background-color: #d1e7dd;
+        color: #198754;
+    }
+
+    .bg-light-warning {
+        background-color: #fff3cd;
+        color: #ffc107;
+    }
+
+    .section-title {
+        font-weight: 700;
+        color: #343a40;
+        margin-bottom: 20px;
+        border-left: 4px solid #0d6efd;
+        padding-left: 15px;
+    }
+</style>
+
+<div class="container py-4">
+    @if (Model.CanhBao != null)
+    {
+        <div class="alert alert-danger shadow-sm border-0 mb-4 rounded-3" role="alert">
+            <div class="d-flex align-items-center">
+                <div class="fs-1 me-3"><i class="fas fa-exclamation-triangle"></i></div>
+                <div>
+                    <h4 class="alert-heading fw-bold">CẢNH BÁO SỨC KHỎE</h4>
+                    <p class="mb-0">
+                        Ngày <strong>@Model.CanhBao.NgayKham.ToString("dd/MM/yyyy")</strong>:
+                        <strong class="text-uppercase">@Model.CanhBao.CanhBao</strong>
+                        (HA: @Model.CanhBao.HuyetApTamThu mmHg - Nhiệt độ: @Model.CanhBao.NhietDo&deg;C).
+                        <span class="badge bg-danger ms-2">Cần tái khám</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card profile-card mb-4">
+                <div class="profile-header">
+                    <img src="https://ui-avatars.com/api/?name=@Model.HoSo.HoTen&background=random&size=128" alt="Avatar" class="avatar-circle">
+                    <h4 class="mb-1">@Model.HoSo.HoTen</h4>
+                    <p class="mb-0 opacity-75">Mã HS: <strong>@Model.HoSo.MaHoSo</strong></p>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span class="text-muted"><i class="fas fa-birthday-cake me-2"></i>Ngày sinh</span>
+                        <span class="fw-bold">@(Model.HoSo.NgaySinh.HasValue ? Model.HoSo.NgaySinh.Value.ToString("dd/MM/yyyy") : "--")</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span class="text-muted"><i class="fas fa-phone me-2"></i>Điện thoại</span>
+                        <span class="fw-bold">@Model.HoSo.SoDienThoaiLienHe</span>
+                    </div>
+                    <div class="mt-3 d-grid">
+                        <a href="@Url.Action("CapNhatThongTin", "BenhNhan")" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="fas fa-user-edit me-1"></i> Cập nhật thông tin
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-2">
+                    <div class="list-group sidebar-menu">
+                        <a href="@Url.Action("HoSoCaNhan", "BenhNhan")" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-id-card-alt"></i> Tổng quan Hồ sơ
+                        </a>
+                        <a href="@Url.Action("LichSuYTe", "BenhNhan")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-stream"></i> Dòng thời gian
+                        </a>
+                        <a href="@Url.Action("LichSuKhamBenh", "BenhNhan")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-history"></i> Lịch sử Khám bệnh
+                        </a>
+                        <div class="my-2 border-top"></div>
+                        <a href="@Url.Action("ThongTinBaoHiem", "BenhNhan")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-wallet text-warning"></i> Ví Bảo Hiểm
+                        </a>
+                        <a href="@Url.Action("LichSuDungThuoc", "BenhNhan")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-pills text-success"></i> Tủ thuốc Cá nhân
+                        </a>
+                        <a href="@Url.Action("BieuDoSucKhoe", "BenhNhan")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line text-danger"></i> Biểu đồ Sức khỏe
+                        </a>
+                        <div class="my-2 border-top"></div>
+                        <a href="@Url.Action("NhatKySucKhoe", "BenhNhan")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book-medical text-info"></i> Nhật ký Sức khỏe
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+
+            <h4 class="section-title">Chỉ số Thể trạng (BMI)</h4>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card stat-card bg-white border-start border-5 border-@Model.BMI_Color p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <small class="text-muted text-uppercase fw-bold">BMI HIỆN TẠI</small>
+                                <div class="fs-1 fw-bold text-@Model.BMI_Color">@Model.BMI_Value</div>
+                                <span class="badge bg-@Model.BMI_Color rounded-pill px-3">@Model.BMI_Text</span>
+                            </div>
+                            <div class="opacity-25 text-@Model.BMI_Color"><i class="fas fa-weight fa-3x"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card stat-card bg-white text-center py-3">
+                        <div class="text-muted small">Chiều cao</div>
+                        <div class="h3 fw-bold text-dark mb-0">@Model.HoSo.ChieuCaoCoDinh <small class="fs-6 text-muted">cm</small></div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card stat-card bg-white text-center py-3">
+                        <div class="text-muted small">Cân nặng</div>
+                        <div class="h3 fw-bold text-dark mb-0">@Model.HoSo.CanNangHienTai <small class="fs-6 text-muted">kg</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="section-title">Tiện ích Sức khỏe</h4>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <a href="@Url.Action("BieuDoSucKhoe", "BenhNhan")" class="text-decoration-none">
+                        <div class="card stat-card bg-white h-100 p-3 text-center">
+                            <div class="feature-icon-box bg-light-primary mx-auto">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h6 class="text-dark fw-bold">Biểu đồ Theo dõi</h6>
+                            <p class="small text-muted mb-0">Xem diễn biến huyết áp, cân nặng qua các lần khám</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="@Url.Action("LichSuDungThuoc", "BenhNhan")" class="text-decoration-none">
+                        <div class="card stat-card bg-white h-100 p-3 text-center">
+                            <div class="feature-icon-box bg-light-success mx-auto">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <h6 class="text-dark fw-bold">Tủ thuốc Cá nhân</h6>
+                            <p class="small text-muted mb-0">Tra cứu các loại thuốc và liều lượng đã sử dụng</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="@Url.Action("ThongTinBaoHiem", "BenhNhan")" class="text-decoration-none">
+                        <div class="card stat-card bg-white h-100 p-3 text-center">
+                            <div class="feature-icon-box bg-light-warning mx-auto">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <h6 class="text-dark fw-bold">Ví Bảo hiểm</h6>
+                            <p class="small text-muted mb-0">Lưu trữ thẻ BHYT và thông tin bảo hiểm số</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white fw-bold text-danger border-bottom-0 pt-3">
+                            <i class="fas fa-allergies me-2"></i>THÔNG TIN DỊ ỨNG
+                        </div>
+                        <div class="card-body pt-0">
+                            @if (Model.HoSo.DiUng != null && Model.HoSo.DiUng.Count > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light"><tr><th>Tác nhân</th><th>Mức độ</th><th>Biểu hiện</th></tr></thead>
+                                        <tbody>
+                                            @foreach (var du in Model.HoSo.DiUng)
+                                            {
+                                                <tr>
+                                                    <td class="fw-bold text-danger">@du.TacNhan</td>
+                                                    <td><span class="badge bg-secondary">@du.MucDo</span></td>
+                                                    <td>@du.BieuHien</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted small mb-0 ps-2">Không có ghi nhận tiền sử dị ứng.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-white fw-bold text-warning border-bottom-0 pt-3" style="color: #ff9800 !important;">
+                            <i class="fas fa-notes-medical me-2"></i>TIỀN SỬ GIA ĐÌNH
+                        </div>
+                        <div class="card-body pt-0">
+                            @if (Model.HoSo.TienSuGiaDinh != null && Model.HoSo.TienSuGiaDinh.Count > 0)
+                            {
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var gd in Model.HoSo.TienSuGiaDinh)
+                                    {
+                                        <li class="list-group-item px-0 py-2">
+                                            <strong>@gd.MoiQuanHe:</strong> @gd.TenBenh <span class="text-muted fst-italic">(@gd.GhiChu)</span>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p class="text-muted small mb-0 ps-2">Chưa có thông tin.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

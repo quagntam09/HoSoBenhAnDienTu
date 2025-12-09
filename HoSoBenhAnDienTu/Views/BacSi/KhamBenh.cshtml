@@ -1,0 +1,326 @@
+﻿@model HoSoBenhAnDienTu.Models.HoSoNguoiDung
+@{
+    ViewBag.Title = "Phiếu Khám Bệnh: " + Model.HoTen;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="card shadow-sm border-0 mb-4 bg-white">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="text-primary fw-bold mb-1">
+                    <i class="fas fa-file-medical-alt me-2"></i>PHIẾU KHÁM BỆNH ĐIỆN TỬ
+                </h4>
+                <div class="text-muted small mt-2">
+                    <span class="me-3"><i class="fas fa-user me-1"></i> <strong>@Model.HoTen</strong></span>
+                    <span class="me-3">|</span>
+                    <span class="me-3"><i class="fas fa-id-card me-1"></i> Mã HS: @Model.MaHoSo</span>
+                    <span class="me-3">|</span>
+                    <span class="me-3"><i class="fas fa-venus-mars me-1"></i> @Model.GioiTinh</span>
+                    <span class="me-3">|</span>
+                    <span><i class="fas fa-birthday-cake me-1"></i> @(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("dd/MM/yyyy") : "--")</span>
+                </div>
+            </div>
+            <a href="@Url.Action("DanhSachBenhNhan", "BacSi")" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <form action="/BacSi/LuuKetQuaKham" method="post" id="formKhamBenh">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="maHoSo" value="@Model.MaHoSo" />
+        <input type="hidden" name="noiKham" value="Bệnh viện Đa khoa" />
+
+        <div class="row g-3 mb-4">
+            <div class="col-lg-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-heartbeat me-2"></i>I. SINH HIỆU</h6>
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Huyết áp (mmHg)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" name="huyetApTamThu" class="form-control" placeholder="Thu" min="50" max="250" required>
+                                <span class="input-group-text">/</span>
+                                <input type="number" name="huyetApTamTruong" class="form-control" placeholder="Trương" min="30" max="150" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nhịp tim (lần/phút)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" name="nhipTim" class="form-control" min="30" max="200" required>
+                                <span class="input-group-text"><i class="fas fa-heart text-danger"></i></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Nhiệt độ (&deg;C)</label>
+                                <input type="number" name="nhietDo" class="form-control form-control-sm" step="0.1" value="37.0" min="34" max="43">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold">Cân nặng (kg)</label>
+                                <input type="number" name="canNang" class="form-control form-control-sm" step="0.1" min="1" max="200">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-stethoscope me-2"></i>II. THÔNG TIN KHÁM</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Chuyên khoa khám <span class="text-danger">*</span></label>
+                            <select name="khoaKham" class="form-select form-select-sm" required>
+                                <option value="" selected disabled>-- Chọn chuyên khoa --</option>
+                                <option value="Nội tổng quát">Nội tổng quát</option>
+                                <option value="Ngoại tổng quát">Ngoại tổng quát</option>
+                                <option value="Nhi khoa">Nhi khoa</option>
+                                <option value="Sản phụ khoa">Sản phụ khoa</option>
+                                <option value="Tai Mũi Họng">Tai Mũi Họng</option>
+                                <option value="Răng Hàm Mặt">Răng Hàm Mặt</option>
+                                <option value="Mắt">Mắt (Nhãn khoa)</option>
+                                <option value="Da liễu">Da liễu</option>
+                                <option value="Tim mạch">Tim mạch</option>
+                                <option value="Cơ xương khớp">Cơ xương khớp</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Lý do khám / Triệu chứng <span class="text-danger">*</span></label>
+                            <input type="text" name="lyDoKham" list="trieuChungList" class="form-control form-control-sm" placeholder="Nhập triệu chứng..." required>
+                            <datalist id="trieuChungList">
+                                <option value="Đau đầu, chóng mặt">
+                                <option value="Sốt cao, rét run">
+                                <option value="Ho, đau họng, sổ mũi">
+                                <option value="Đau bụng vùng thượng vị">
+                                <option value="Đau thắt ngực trái">
+                                <option value="Đau lưng, mỏi gối">
+                                <option value="Mẩn ngứa, dị ứng da">
+                                <option value="Khám sức khỏe định kỳ">
+                            </datalist>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label fw-bold text-muted small">Tiền sử bệnh (Tham khảo)</label>
+                            <div class="p-2 bg-light border rounded small text-secondary" style="max-height: 120px; overflow-y: auto;">
+                                @if (Model.TienSuBenh != null && Model.TienSuBenh.Any())
+                                {
+                                    <ul class="mb-0 ps-3">
+                                        @foreach (var ts in Model.TienSuBenh)
+                                        {
+                                            <li>@ts.TenBenh (@ts.NamPhatHien)</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <span class="fst-italic">Chưa có ghi nhận tiền sử.</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-file-signature me-2"></i>III. KẾT LUẬN</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Chẩn đoán chính <span class="text-danger">*</span></label>
+                            <textarea name="chanDoan" class="form-control form-control-sm" rows="3" placeholder="Ghi rõ tên bệnh (ICD-10)..." required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Lời dặn bác sĩ</label>
+                            <textarea name="loiDan" class="form-control form-control-sm" rows="2" placeholder="Chế độ ăn uống, nghỉ ngơi..."></textarea>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="form-check form-switch me-3">
+                                <input class="form-check-input" type="checkbox" id="checkTaiKham" onchange="toggleTaiKham()">
+                                <label class="form-check-label fw-bold small" for="checkTaiKham">Hẹn tái khám</label>
+                            </div>
+                            <div class="flex-grow-1 d-none" id="divNgayTaiKham">
+                                <input type="date" name="ngayTaiKham" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-capsules me-2"></i>IV. CHỈ ĐỊNH THUỐC & DỊCH VỤ</h6>
+                <button type="button" class="btn btn-sm btn-light text-info fw-bold shadow-sm" onclick="addDrugRow()">
+                    <i class="fas fa-plus-circle me-1"></i>Thêm dòng thuốc
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 align-middle">
+                        <thead class="bg-light text-secondary small text-uppercase text-center">
+                            <tr>
+                                <th style="width: 25%">Tên thuốc (Gõ để tìm)</th>
+                                <th style="width: 15%">Hàm lượng</th>
+                                <th style="width: 10%">ĐVT</th>
+                                <th style="width: 10%">Số lượng</th>
+                                <th style="width: 25%">Cách dùng</th>
+                                <th style="width: 10%">Ghi chú</th>
+                                <th style="width: 5%">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDonThuoc">
+                            <tr>
+                                <td>
+                                    <input type="text" name="tenthuoc[]" class="form-control form-control-sm fw-bold text-primary search-thuoc"
+                                           placeholder="Nhập tên thuốc..." list="list-thuoc-0"
+                                           oninput="searchDrug(this, 0)" autocomplete="off">
+                                    <datalist id="list-thuoc-0"></datalist>
+                                </td>
+                                <td><input type="text" name="hamluong[]" class="form-control form-control-sm bg-white text-center" readonly tabindex="-1"></td>
+                                <td><input type="text" name="donvi[]" class="form-control form-control-sm text-center bg-white" readonly tabindex="-1"></td>
+                                <td><input type="number" name="soluong[]" class="form-control form-control-sm text-center fw-bold" value="1" min="1"></td>
+                                <td><input type="text" name="cachdung[]" class="form-control form-control-sm" placeholder="Sáng... Chiều..."></td>
+                                <td><input type="text" name="ghichu[]" class="form-control form-control-sm"></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white small text-muted">
+                <i class="fas fa-info-circle me-1"></i> Gõ tên thuốc vào cột đầu tiên để hệ thống gợi ý. Hàm lượng và ĐVT sẽ tự động điền.
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 col-lg-4 mx-auto mb-5">
+            <button type="submit" class="btn btn-primary btn-lg fw-bold shadow">
+                <i class="fas fa-save me-2"></i>HOÀN TẤT & LƯU HỒ SƠ
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 1. Xử lý Toggle ngày tái khám
+    function toggleTaiKham() {
+        var checkBox = document.getElementById("checkTaiKham");
+        var divDate = document.getElementById("divNgayTaiKham");
+        if (checkBox.checked == true) {
+            divDate.classList.remove("d-none");
+            divDate.querySelector('input').focus();
+        } else {
+            divDate.classList.add("d-none");
+            divDate.querySelector('input').value = ''; // Reset ngày nếu bỏ chọn
+        }
+    }
+
+    // 2. Xử lý Kê đơn thuốc
+    let rowCount = 1;
+
+    // Hàm gọi API tìm thuốc khi người dùng gõ
+    function searchDrug(inputElement, index) {
+        const keyword = inputElement.value;
+        const dataListId = `list-thuoc-${index}`;
+        const dataList = document.getElementById(dataListId);
+
+        if (keyword.length < 2) return; // Chỉ tìm khi gõ trên 2 ký tự
+
+        // Gọi Ajax tới Controller
+        fetch(`/BacSi/GetThuocSuggestions?term=${keyword}`)
+            .then(response => response.json())
+            .then(data => {
+                dataList.innerHTML = ''; // Xóa gợi ý cũ
+
+                data.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.value;
+                    // Lưu dữ liệu phụ vào attribute
+                    option.setAttribute('data-donvi', item.donVi || '');
+                    option.setAttribute('data-hamluong', item.hamLuong || '');
+                    // Hiển thị text phụ (tùy trình duyệt)
+                    option.label = `${item.label}`;
+
+                    dataList.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Lỗi tìm thuốc:', error));
+
+        // Sự kiện khi người dùng CHỌN 1 thuốc từ danh sách gợi ý
+        inputElement.onchange = function() {
+            const val = inputElement.value;
+            const opts = document.getElementById(dataListId).childNodes;
+
+            for (var i = 0; i < opts.length; i++) {
+                if (opts[i].value === val) {
+                    const row = inputElement.closest('tr');
+                    // Tự động điền Hàm lượng và Đơn vị
+                    row.querySelector('input[name="hamluong[]"]').value = opts[i].getAttribute('data-hamluong');
+                    row.querySelector('input[name="donvi[]"]').value = opts[i].getAttribute('data-donvi');
+                    // Focus sang ô Số lượng
+                    row.querySelector('input[name="soluong[]"]').select();
+                    break;
+                }
+            }
+        };
+    }
+
+    // Hàm thêm dòng thuốc mới
+    function addDrugRow() {
+        rowCount++;
+        const tbody = document.getElementById('tbodyDonThuoc');
+        const newRow = `
+            <tr>
+                <td>
+                    <input type="text" name="tenthuoc[]" class="form-control form-control-sm fw-bold text-primary search-thuoc"
+                           placeholder="Nhập tên thuốc..." list="list-thuoc-${rowCount}"
+                           oninput="searchDrug(this, ${rowCount})" autocomplete="off">
+                    <datalist id="list-thuoc-${rowCount}"></datalist>
+                </td>
+                <td><input type="text" name="hamluong[]" class="form-control form-control-sm bg-white text-center" readonly tabindex="-1"></td>
+                <td><input type="text" name="donvi[]" class="form-control form-control-sm text-center bg-white" readonly tabindex="-1"></td>
+                <td><input type="number" name="soluong[]" class="form-control form-control-sm text-center fw-bold" value="1" min="1"></td>
+                <td><input type="text" name="cachdung[]" class="form-control form-control-sm" placeholder="Sáng... Chiều..."></td>
+                <td><input type="text" name="ghichu[]" class="form-control form-control-sm"></td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', newRow);
+
+        // Focus vào ô tên thuốc của dòng mới tạo
+        setTimeout(() => {
+            const inputs = tbody.querySelectorAll('input[name="tenthuoc[]"]');
+            inputs[inputs.length - 1].focus();
+        }, 100);
+    }
+
+    // Hàm xóa dòng
+    function removeRow(btn) {
+        const row = btn.closest('tr');
+        if (document.querySelectorAll('#tbodyDonThuoc tr').length > 1) {
+            row.remove();
+        } else {
+            // Nếu còn 1 dòng thì chỉ clear data
+            row.querySelectorAll('input').forEach(input => input.value = '');
+            row.querySelector('input[name="soluong[]"]').value = 1;
+        }
+    }
+</script>

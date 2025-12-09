@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Hồ sơ Sức khỏe Điện tử</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                <i class="fas fa-heartbeat"></i> E-Health
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (Session["RoleID"] != null)
+                    {
+                        if (Session["RoleID"].ToString() == "1") // BÁC SĨ (ADMIN)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("DanhSachBenhNhan", "BacSi")">
+                                    <i class="fas fa-users"></i> Quản lý Bệnh nhân
+                                </a>
+                            </li>
+                        }
+                        else if (Session["RoleID"].ToString() == "2") // BỆNH NHÂN
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("HoSoCaNhan", "BenhNhan")">
+                                    <i class="fas fa-id-card"></i> Hồ sơ của tôi
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("LichSuYTe", "BenhNhan")">
+                                    <i class="fas fa-history"></i> Dòng thời gian
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("NhatKySucKhoe", "BenhNhan")">
+                                    <i class="fas fa-book-medical"></i> Nhật ký
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                    @if (Session["UserID"] != null)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i> Xin chào, @Session["TenHienThi"]
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                @if (Session["RoleID"].ToString() == "2")
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("CapNhatThongTin", "BenhNhan")">
+                                            <i class="fas fa-edit"></i> Cập nhật chỉ số
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                }
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("Logout", "Account")">
+                                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Login", "Account")"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content" style="margin-top: 20px;">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Hệ thống Quản lý Hồ sơ Sức khỏe</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

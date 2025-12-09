@@ -1,0 +1,106 @@
+﻿@model IEnumerable<HoSoBenhAnDienTu.Models.SuKienYTe>
+@{ ViewBag.Title = "Dòng thời gian Y tế"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<style>
+    .timeline {
+        list-style: none;
+        padding: 20px 0 20px;
+        position: relative;
+    }
+
+        .timeline:before {
+            top: 0;
+            bottom: 0;
+            position: absolute;
+            content: " ";
+            width: 3px;
+            background-color: #eeeeee;
+            left: 50%;
+            margin-left: -1.5px;
+        }
+
+        .timeline > li {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+            .timeline > li:before, .timeline > li:after {
+                content: " ";
+                display: table;
+            }
+
+            .timeline > li:after {
+                clear: both;
+            }
+
+            .timeline > li > .timeline-panel {
+                width: 46%;
+                float: left;
+                border: 1px solid #d4d4d4;
+                border-radius: 2px;
+                padding: 20px;
+                position: relative;
+                -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+                box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
+            }
+
+            .timeline > li > .timeline-badge {
+                color: #fff;
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 1.4em;
+                text-align: center;
+                position: absolute;
+                top: 16px;
+                left: 50%;
+                margin-left: -25px;
+                background-color: #999999;
+                z-index: 100;
+                border-top-right-radius: 50%;
+                border-top-left-radius: 50%;
+                border-bottom-right-radius: 50%;
+                border-bottom-left-radius: 50%;
+            }
+
+            .timeline > li.timeline-inverted > .timeline-panel {
+                float: right;
+            }
+
+    .info {
+        background-color: #5bc0de !important;
+    }
+
+    .success {
+        background-color: #5cb85c !important;
+    }
+
+    .danger {
+        background-color: #d9534f !important;
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center">Dòng thời gian Sức khỏe</h2>
+    <ul class="timeline">
+        @{ int i = 0; }
+        @foreach (var item in Model)
+        {
+            <li class="@(i % 2 == 0 ? "" : "timeline-inverted")">
+                <div class="timeline-badge @item.ColorClass"><i class="glyphicon @item.IconClass"></i></div>
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <h4 class="timeline-title">@item.TieuDe</h4>
+                        <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> @item.Ngay.ToString("dd/MM/yyyy") - @item.LoaiSuKien</small></p>
+                    </div>
+                    <div class="timeline-body">
+                        <p>@item.NoiDung</p>
+                    </div>
+                </div>
+            </li>
+            i++;
+        }
+    </ul>
+    @if (!Model.Any())
+    {<p class="text-center">Chưa có dữ liệu y tế nào.</p>}
+</div>

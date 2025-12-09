@@ -1,0 +1,143 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - Hồ sơ Sức khỏe Điện tử</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <style>
+        body {
+            /* Hình nền y tế nhẹ nhàng */
+            background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('https://img.freepik.com/free-vector/clean-medical-background_53876-97927.jpg?w=1380');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .login-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #0d6efd;
+        }
+
+        .input-group-text {
+            background-color: white;
+            border-right: none;
+        }
+
+        .form-control {
+            border-left: none;
+        }
+
+        .btn-login {
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #0d6efd, #0056b3);
+            border: none;
+        }
+
+            .btn-login:hover {
+                background: linear-gradient(135deg, #0056b3, #004494);
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card login-card animate__animated animate__fadeInDown">
+                    <div class="login-header">
+                        <div class="login-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0">E-HEALTH SYSTEM</h4>
+                        <small>Hệ thống Hồ sơ Sức khỏe Điện tử</small>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <h5 class="text-center text-muted mb-4">Đăng nhập</h5>
+
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <div>@ViewBag.Error</div>
+                            </div>
+                        }
+
+                        <form action="/Account/Login" method="post">
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold">TÊN ĐĂNG NHẬP</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-primary"><i class="fas fa-user"></i></span>
+                                    <input type="text" name="username" class="form-control" placeholder="Nhập username..." required autofocus />
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label text-muted small fw-bold">MẬT KHẨU</label>
+                                <div class="input-group">
+                                    <span class="input-group-text text-primary"><i class="fas fa-lock"></i></span>
+                                    <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." required />
+                                </div>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-login text-white shadow">
+                                    ĐĂNG NHẬP <i class="fas fa-sign-in-alt ms-2"></i>
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <a href="#" class="text-decoration-none small text-muted">Quên mật khẩu?</a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer bg-light text-center py-3">
+                        <small class="text-muted d-block">Tài khoản Demo:</small>
+                        <span class="badge bg-primary me-1">admin / 123456</span>
+                        <span class="badge bg-success">nguyenvana / 123456</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

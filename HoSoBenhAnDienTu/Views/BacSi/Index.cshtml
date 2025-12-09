@@ -1,0 +1,78 @@
+﻿@model IEnumerable<HoSoBenhAnDienTu.Models.HoSoNguoiDung>
+
+@{
+    ViewBag.Title = "Danh sách Bệnh nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Đảm bảo bạn có Layout chuẩn
+}
+
+<div class="container-fluid" style="padding-top: 20px;">
+    <h2 class="text-primary"><i class="glyphicon glyphicon-user"></i> Quản lý Hồ sơ Bệnh nhân</h2>
+    <hr />
+
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-6">
+            <form action="/BacSi/Index" method="get" class="form-inline">
+                <div class="input-group" style="width: 100%;">
+                    <input type="text" name="searchString" class="form-control" placeholder="Tìm theo Tên, SĐT hoặc Mã hồ sơ..." value="@Request.QueryString["searchString"]" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="glyphicon glyphicon-search"></i> Tìm kiếm
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 text-right">
+            <span class="label label-info" style="font-size: 14px;">Tổng số hồ sơ: @Model.Count()</span>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="bg-primary" style="color: white;">
+                <tr>
+                    <th class="text-center">Mã HS</th>
+                    <th>Họ và Tên</th>
+                    <th class="text-center">Năm sinh</th>
+                    <th class="text-center">Giới tính</th>
+                    <th class="text-center">Nhóm máu</th>
+                    <th>SĐT Liên hệ</th>
+                    <th>Lần khám cuối</th>
+                    <th class="text-center" style="width: 150px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count() == 0)
+                {
+                    <tr>
+                        <td colspan="8" class="text-center text-danger">Không tìm thấy bệnh nhân nào.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        // Lấy ngày khám gần nhất để hiển thị (Logic nhỏ trong View)
+                        var lanKhamCuoi = item.LanKham.OrderByDescending(x => x.NgayKham).FirstOrDefault();
+                        string ngayKhamCuoi = lanKhamCuoi != null ? lanKhamCuoi.NgayKham.ToString("dd/MM/yyyy") : "Chưa khám";
+
+                        <tr>
+                            <td class="text-center">@item.MaHoSo</td>
+                            <td style="font-weight: bold;">@item.HoTen</td>
+                            <td class="text-center">@(item.NgaySinh.HasValue ? item.NgaySinh.Value.ToString("yyyy") : "--")</td>
+                            <td class="text-center">@item.GioiTinh</td>
+                            <td class="text-center"><span class="badge">@item.NhomMau</span></td>
+                            <td>@item.SoDienThoaiLienHe</td>
+                            <td>@ngayKhamCuoi</td>
+                            <td class="text-center">
+                                <a href="@Url.Action("TheoDoiSucKhoe", "BacSi", new { id = item.MaHoSo })" class="btn btn-success btn-sm" title="Xem biểu đồ sức khỏe">
+                                    <i class="glyphicon glyphicon-stats"></i> Theo dõi
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

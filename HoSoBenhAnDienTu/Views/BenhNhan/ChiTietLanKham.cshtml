@@ -1,0 +1,176 @@
+﻿@using HoSoBenhAnDienTu.Models
+@model LanKham
+
+@{
+    ViewBag.Title = "Chi tiết đợt khám";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Lấy dữ liệu từ ViewBag truyền qua Controller
+    var chiSo = ViewBag.ChiSo as ChiSoKham;
+    var donThuoc = ViewBag.DonThuoc as List<DonThuoc>;
+    var taiLieu = ViewBag.TaiLieu as List<TaiLieuKham>;
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="text-muted mb-0">Chi tiết lần khám ngày</h4>
+            <h2 class="text-primary fw-bold">@Model.NgayKham.ToString("dd/MM/yyyy")</h2>
+        </div>
+        <a href="@Url.Action("LichSuKhamBenh", "BenhNhan")" class="btn btn-outline-secondary">
+            <i class="fas fa-chevron-left me-2"></i>Trở về
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 border-end">
+                    <p class="mb-1 text-muted">Nơi khám</p>
+                    <h5 class="fw-bold text-dark"><i class="fas fa-hospital-alt me-2 text-primary"></i>@Model.NoiKham</h5>
+                    <p class="mb-1 mt-3 text-muted">Bác sĩ điều trị</p>
+                    <h5 class="fw-bold text-dark"><i class="fas fa-user-md me-2 text-primary"></i>@Model.BacSiKham</h5>
+                </div>
+                <div class="col-md-6 ps-md-4 mt-3 mt-md-0">
+                    <p class="mb-1 text-muted">Chẩn đoán chính</p>
+                    <h4 class="text-danger fw-bold">@Model.ChanDoanChinh</h4>
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="fas fa-comment-medical me-2"></i><strong>Lời dặn:</strong> @(string.IsNullOrEmpty(Model.LoiDanBacSi) ? "Không có lời dặn đặc biệt" : Model.LoiDanBacSi)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="fw-bold mb-3 border-start border-4 border-success ps-2 text-success">Chỉ số Sinh tồn</h5>
+    @if (chiSo != null)
+    {
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100" style="background-color: #ffebee;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-heartbeat fs-3 text-danger mb-2"></i>
+                        <h6 class="text-muted mb-0">Huyết áp</h6>
+                        <h4 class="fw-bold text-danger my-1">@chiSo.HuyetApTamThu / @chiSo.HuyetApTamTruong</h4>
+                        <small>mmHg</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100" style="background-color: #e3f2fd;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-wave-square fs-3 text-primary mb-2"></i>
+                        <h6 class="text-muted mb-0">Nhịp tim</h6>
+                        <h4 class="fw-bold text-primary my-1">@chiSo.NhipTim</h4>
+                        <small>lần/phút</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100" style="background-color: #fff3e0;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-thermometer-half fs-3 text-warning mb-2"></i>
+                        <h6 class="text-muted mb-0">Nhiệt độ</h6>
+                        <h4 class="fw-bold text-warning my-1">@chiSo.NhietDo</h4>
+                        <small>&deg;C</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100" style="background-color: #e8f5e9;">
+                    <div class="card-body text-center">
+                        <i class="fas fa-weight fs-3 text-success mb-2"></i>
+                        <h6 class="text-muted mb-0">Cân nặng</h6>
+                        <h4 class="fw-bold text-success my-1">@chiSo.CanNang</h4>
+                        <small>kg</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted fst-italic mb-4">Không có dữ liệu chỉ số sinh tồn cho lần khám này.</p>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <h5 class="fw-bold mb-3 border-start border-4 border-primary ps-2 text-primary">Đơn thuốc được kê</h5>
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Tên thuốc</th>
+                                    <th>Số lượng</th>
+                                    <th>Cách dùng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (donThuoc != null && donThuoc.Count > 0)
+                                {
+                                    foreach (var thuoc in donThuoc)
+                                    {
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="fw-bold text-primary">@thuoc.TenThuoc</div>
+                                                <small class="text-muted">@thuoc.HamLuong</small>
+                                            </td>
+                                            <td><span class="badge bg-secondary">@thuoc.SoLuong @thuoc.DonViTinh</span></td>
+                                            <td class="fst-italic text-muted">@thuoc.CachDung</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">Không có đơn thuốc.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <h5 class="fw-bold mb-3 border-start border-4 border-warning ps-2 text-warning">Kết quả Cận lâm sàng</h5>
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    @if (taiLieu != null && taiLieu.Count > 0)
+                    {
+                        <div class="list-group">
+                            @foreach (var file in taiLieu)
+                            {
+                                <a href="@file.DuongDanFile" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center p-3 mb-2 rounded border">
+                                    <div class="fs-2 me-3 text-secondary">
+                                        @if (file.LoaiFile != null && file.LoaiFile.Contains("Image"))
+                                        {<i class="fas fa-file-image text-success"></i> }
+                                        else if (file.LoaiFile != null && file.LoaiFile.Contains("PDF"))
+                                        { <i class="fas fa-file-pdf text-danger"></i> }
+                                        else
+                                        { <i class="fas fa-file-alt"></i>}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">@file.TenTaiLieu</h6>
+                                        <small class="text-muted">Nhấn để xem chi tiết</small>
+                                    </div>
+                                    <i class="fas fa-external-link-alt text-muted"></i>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-file-medical-alt fs-1 text-muted opacity-25 mb-2"></i>
+                            <p class="text-muted small">Không có tài liệu đính kèm (X-Quang, Xét nghiệm...).</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
