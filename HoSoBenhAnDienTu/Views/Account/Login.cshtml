@@ -14,7 +14,6 @@
 
     <style>
         body {
-            /* Hình nền y tế nhẹ nhàng */
             background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('https://img.freepik.com/free-vector/clean-medical-background_53876-97927.jpg?w=1380');
             background-size: cover;
             background-position: center;
@@ -92,6 +91,14 @@
                     <div class="card-body p-4">
                         <h5 class="text-center text-muted mb-4">Đăng nhập</h5>
 
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success d-flex align-items-center" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <div>@TempData["Success"]</div>
+                            </div>
+                        }
+
                         @if (ViewBag.Error != null)
                         {
                             <div class="alert alert-danger d-flex align-items-center" role="alert">
@@ -130,9 +137,8 @@
                     </div>
 
                     <div class="card-footer bg-light text-center py-3">
-                        <small class="text-muted d-block">Tài khoản Demo:</small>
-                        <span class="badge bg-primary me-1">admin / 123456</span>
-                        <span class="badge bg-success">nguyenvana / 123456</span>
+                        <small class="text-muted">Chưa có tài khoản?</small>
+                        <a href="/Account/Register" class="text-decoration-none fw-bold ms-1">Đăng ký ngay</a>
                     </div>
                 </div>
             </div>

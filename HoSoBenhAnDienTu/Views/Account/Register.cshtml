@@ -1,0 +1,245 @@
+﻿@model HoSoBenhAnDienTu.Models.RegisterViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký Tài khoản - E-Health</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        body {
+            /* Giữ nguyên background giống trang Login để đồng bộ */
+            background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('https://img.freepik.com/free-vector/clean-medical-background_53876-97927.jpg?w=1380');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Cố định nền khi cuộn */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 800px; /* Rộng hơn để chứa 2 cột */
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .register-header {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            padding: 25px;
+            text-align: center;
+            color: white;
+        }
+
+        .section-title {
+            color: #0d6efd;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 5px;
+            margin-top: 10px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+        }
+
+            .form-control:focus, .form-select:focus {
+                box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+                border-color: #0d6efd;
+            }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-radius: 8px 0 0 8px;
+            color: #6c757d;
+        }
+
+        .btn-register {
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #198754, #20c997); /* Màu xanh lá tươi mới */
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+            .btn-register:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(25, 135, 84, 0.3);
+                color: white;
+            }
+
+        .login-link {
+            color: #0d6efd;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+            .login-link:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card register-card animate__animated animate__fadeInUp">
+
+                    <div class="register-header">
+                        <i class="fas fa-user-plus fa-3x mb-2"></i>
+                        <h4 class="fw-bold m-0">ĐĂNG KÝ HỒ SƠ MỚI</h4>
+                        <small class="opacity-75">Tạo tài khoản để theo dõi sức khỏe toàn diện</small>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger shadow-sm">
+                                <i class="fas fa-exclamation-triangle me-2"></i> @ViewBag.Error
+                            </div>
+                        }
+
+                        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="section-title"><i class="fas fa-lock me-2"></i>Thông tin Tài khoản</div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Tên đăng nhập <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        @Html.TextBoxFor(m => m.TenDangNhap, new { @class = "form-control", placeholder = "VD: nguyenvanan", required = "required" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.TenDangNhap, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Email <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "email@example.com", required = "required" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Mật khẩu <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        @Html.PasswordFor(m => m.MatKhau, new { @class = "form-control", placeholder = "******", required = "required" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.MatKhau, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
+                                        @Html.PasswordFor(m => m.XacNhanMatKhau, new { @class = "form-control", placeholder = "Nhập lại mật khẩu", required = "required" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.XacNhanMatKhau, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-id-card me-2"></i>Thông tin Cá nhân</div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Họ và tên <span class="text-danger">*</span></label>
+                                    @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control", placeholder = "VD: Nguyễn Văn An", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.HoTen, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Số điện thoại <span class="text-danger">*</span></label>
+                                    @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control", placeholder = "VD: 0912345678", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.SoDienThoai, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Ngày sinh <span class="text-danger">*</span></label>
+                                    @Html.TextBoxFor(m => m.NgaySinh, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.NgaySinh, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted">Giới tính <span class="text-danger">*</span></label>
+                                    @Html.DropDownListFor(m => m.GioiTinh, new List<SelectListItem>
+                                    {
+                                        new SelectListItem { Text = "Nam", Value = "Nam" },
+                                        new SelectListItem { Text = "Nữ", Value = "Nữ" },
+                                        new SelectListItem { Text = "Khác", Value = "Khác" }
+                                    }, "Chọn giới tính", new { @class = "form-select", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-weight me-2"></i>Chỉ số Cơ thể (Tùy chọn)</div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted">Nhóm máu</label>
+                                    @Html.DropDownListFor(m => m.NhomMau, new List<SelectListItem>
+                                    {
+                                        new SelectListItem { Text = "A", Value = "A" },
+                                        new SelectListItem { Text = "B", Value = "B" },
+                                        new SelectListItem { Text = "AB", Value = "AB" },
+                                        new SelectListItem { Text = "O", Value = "O" },
+                                        new SelectListItem { Text = "Chưa rõ", Value = "" }
+                                    }, "Chọn nhóm máu", new { @class = "form-select" })
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted">Chiều cao (cm)</label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.ChieuCao, new { @class = "form-control", type = "number", min = "1", placeholder = "VD: 170" })
+                                        <span class="input-group-text">cm</span>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.ChieuCao, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted">Cân nặng (kg)</label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.CanNang, new { @class = "form-control", type = "number", step = "0.1", min = "1", placeholder = "VD: 65.5" })
+                                        <span class="input-group-text">kg</span>
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.CanNang, "", new { @class = "text-danger small mt-1" })
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-5">
+                                <button type="submit" class="btn btn-register shadow">
+                                    <i class="fas fa-check-circle me-2"></i>HOÀN TẤT ĐĂNG KÝ
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-light text-center py-3">
+                        <span class="text-muted">Đã có tài khoản?</span>
+                        <a href="/Account/Login" class="login-link ms-2">Đăng nhập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

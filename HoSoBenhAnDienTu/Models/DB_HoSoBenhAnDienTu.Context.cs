@@ -77,7 +77,7 @@ namespace HoSoBenhAnDienTu.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("Proc_CapNhatChiSoSinhTon", maLanKhamParameter, huyetApTamThuParameter, huyetApTamTruongParameter, nhipTimParameter, nhietDoParameter, canNangParameter);
         }
     
-        public virtual ObjectResult<Nullable<int>> Proc_DangKyTaiKhoan(string tenDangNhap, string matKhauHash, string email, string hoTen)
+        public virtual ObjectResult<Nullable<int>> Proc_DangKyTaiKhoan(string tenDangNhap, string matKhauHash, string email, string hoTen, Nullable<System.DateTime> ngaySinh, string gioiTinh, string soDienThoai)
         {
             var tenDangNhapParameter = tenDangNhap != null ?
                 new ObjectParameter("TenDangNhap", tenDangNhap) :
@@ -95,7 +95,19 @@ namespace HoSoBenhAnDienTu.Models
                 new ObjectParameter("HoTen", hoTen) :
                 new ObjectParameter("HoTen", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Proc_DangKyTaiKhoan", tenDangNhapParameter, matKhauHashParameter, emailParameter, hoTenParameter);
+            var ngaySinhParameter = ngaySinh.HasValue ?
+                new ObjectParameter("NgaySinh", ngaySinh) :
+                new ObjectParameter("NgaySinh", typeof(System.DateTime));
+    
+            var gioiTinhParameter = gioiTinh != null ?
+                new ObjectParameter("GioiTinh", gioiTinh) :
+                new ObjectParameter("GioiTinh", typeof(string));
+    
+            var soDienThoaiParameter = soDienThoai != null ?
+                new ObjectParameter("SoDienThoai", soDienThoai) :
+                new ObjectParameter("SoDienThoai", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("Proc_DangKyTaiKhoan", tenDangNhapParameter, matKhauHashParameter, emailParameter, hoTenParameter, ngaySinhParameter, gioiTinhParameter, soDienThoaiParameter);
         }
     
         public virtual ObjectResult<Proc_LayChiTietLanKham_Result> Proc_LayChiTietLanKham(Nullable<int> maLanKham)

@@ -441,6 +441,9 @@ warning 6002: The table/view 'HoSoSucKhoeCaNhan_Full.dbo.View_TongHopLichSuKham'
           <Parameter Name="MatKhauHash" Type="varchar" Mode="In" />
           <Parameter Name="Email" Type="varchar" Mode="In" />
           <Parameter Name="HoTen" Type="nvarchar" Mode="In" />
+          <Parameter Name="NgaySinh" Type="date" Mode="In" />
+          <Parameter Name="GioiTinh" Type="nvarchar" Mode="In" />
+          <Parameter Name="SoDienThoai" Type="varchar" Mode="In" />
         </Function>
         <Function Name="Proc_KeDonThuoc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MaLanKham" Type="int" Mode="In" />
@@ -666,6 +669,9 @@ FROM [dbo].[View_TongHopLichSuKham] AS [View_TongHopLichSuKham]</DefiningQuery>
             <Parameter Name="MatKhauHash" Mode="In" Type="String" />
             <Parameter Name="Email" Mode="In" Type="String" />
             <Parameter Name="HoTen" Mode="In" Type="String" />
+            <Parameter Name="NgaySinh" Mode="In" Type="DateTime" />
+            <Parameter Name="GioiTinh" Mode="In" Type="String" />
+            <Parameter Name="SoDienThoai" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="Proc_LayChiTietLanKham" ReturnType="Collection(HoSoSucKhoeCaNhan_FullModel.Proc_LayChiTietLanKham_Result)">
           <Parameter Name="MaLanKham" Mode="In" Type="Int32" />

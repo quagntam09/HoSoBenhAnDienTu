@@ -178,6 +178,7 @@
     <Compile Include="Models\Proc_LayChiTietLanKham_Result.cs">
       <DependentUpon>DB_HoSoBenhAnDienTu.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\TaiKhoan.cs">
       <DependentUpon>DB_HoSoBenhAnDienTu.tt</DependentUpon>
     </Compile>
@@ -290,6 +291,7 @@
     <Content Include="Views\BenhNhan\LichSuDungThuoc.cshtml" />
     <Content Include="Views\BenhNhan\BieuDoSucKhoe.cshtml" />
     <Content Include="Views\BacSi\KhamBenh.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

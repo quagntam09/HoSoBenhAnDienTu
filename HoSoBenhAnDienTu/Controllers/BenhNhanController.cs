@@ -326,5 +326,47 @@ namespace HoSoBenhAnDienTu.Controllers
 
             return Json(result);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ThemMoiBaoHiem(string SoThe, string LoaiBaoHiem, string NoiDangKyKhamBanDau, DateTime? NgayHetHan)
+        {
+            if (KiemTraQuyen() && Session["MaHoSo"] != null)
+            {
+                try
+                {
+                    var baoHiemMoi = new TheBaoHiem();
+                    baoHiemMoi.MaHoSo = (int)Session["MaHoSo"];
+                    baoHiemMoi.SoThe = SoThe;
+                    baoHiemMoi.LoaiBaoHiem = LoaiBaoHiem;
+                    baoHiemMoi.NoiDangKyKhamBanDau = NoiDangKyKhamBanDau;
+                    baoHiemMoi.NgayHetHan = NgayHetHan;
+
+                    baoHiemMoi.AnhChupThe = "";
+
+                    db.TheBaoHiem.Add(baoHiemMoi);
+                    db.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Đã thêm thẻ bảo hiểm mới thành công!";
+                }
+                catch (System.Data.Entity.Infrastructure.DbUpdateException dbEx)
+                {
+                    var sqlEx = dbEx.InnerException?.InnerException as System.Data.SqlClient.SqlException;
+                    if (sqlEx != null && sqlEx.Number == 2627)
+                    {
+                        TempData["ErrorMessage"] = "Lỗi: Số thẻ bảo hiểm này đã tồn tại trong hệ thống.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Lỗi khi lưu: " + dbEx.Message;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Lỗi hệ thống: " + ex.Message;
+                }
+            }
+            return RedirectToAction("ThongTinBaoHiem");
+        }
     }
 }
