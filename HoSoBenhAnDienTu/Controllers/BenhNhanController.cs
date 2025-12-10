@@ -1,9 +1,10 @@
-﻿using System;
+﻿using HoSoBenhAnDienTu.Models; 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using HoSoBenhAnDienTu.Models; 
 
 namespace HoSoBenhAnDienTu.Controllers
 {
@@ -367,6 +368,155 @@ namespace HoSoBenhAnDienTu.Controllers
                 }
             }
             return RedirectToAction("ThongTinBaoHiem");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ThemMoiDiUng(string TacNhan, string MucDo, string BieuHien)
+        {
+            if (KiemTraQuyen() && Session["MaHoSo"] != null)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(TacNhan))
+                    {
+                        TempData["ErrorMessage"] = "Tên tác nhân dị ứng không được để trống.";
+                        return RedirectToAction("HoSoCaNhan");
+                    }
+
+                    var diUng = new DiUng();
+                    diUng.MaHoSo = (int)Session["MaHoSo"];
+                    diUng.TacNhan = TacNhan;
+                    diUng.MucDo = MucDo;
+                    diUng.BieuHien = BieuHien;
+                    diUng.NgayPhatHien = DateTime.Now; // Mặc định lấy ngày hiện tại
+
+                    db.DiUng.Add(diUng);
+                    db.SaveChanges();
+                    TempData["SuccessMessage"] = "Đã thêm thông tin dị ứng thành công!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Lỗi khi lưu: " + ex.Message;
+                }
+            }
+            return RedirectToAction("HoSoCaNhan");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ThemMoiTienSuGiaDinh(string MoiQuanHe, string TenBenh, string GhiChu)
+        {
+            if (KiemTraQuyen() && Session["MaHoSo"] != null)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(TenBenh) || string.IsNullOrEmpty(MoiQuanHe))
+                    {
+                        TempData["ErrorMessage"] = "Mối quan hệ và Tên bệnh không được để trống.";
+                        return RedirectToAction("HoSoCaNhan");
+                    }
+
+                    var tienSu = new TienSuGiaDinh();
+                    tienSu.MaHoSo = (int)Session["MaHoSo"];
+                    tienSu.MoiQuanHe = MoiQuanHe;
+                    tienSu.TenBenh = TenBenh;
+                    tienSu.GhiChu = GhiChu;
+
+                    db.TienSuGiaDinh.Add(tienSu);
+                    db.SaveChanges();
+                    TempData["SuccessMessage"] = "Đã thêm tiền sử gia đình thành công!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Lỗi khi lưu: " + ex.Message;
+                }
+            }
+            return RedirectToAction("HoSoCaNhan");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadTaiLieu(int maLanKham, HttpPostedFileBase fileUpload, string tenTaiLieu)
+        {
+            if (!KiemTraQuyen()) return RedirectToAction("Login", "Account");
+            int maHoSo = (int)Session["MaHoSo"];
+
+            var lanKham = db.LanKham.FirstOrDefault(x => x.MaLanKham == maLanKham && x.MaHoSo == maHoSo);
+            if (lanKham == null)
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền truy cập lần khám này.";
+                return RedirectToAction("LichSuKhamBenh");
+            }
+
+            if (fileUpload != null && fileUpload.ContentLength > 0)
+            {
+                try
+                {
+                    string fileName = Path.GetFileName(fileUpload.FileName);
+                    string uniqueFileName = DateTime.Now.Ticks.ToString() + "_" + fileName;
+                    string path = Path.Combine(Server.MapPath("~/Content/Uploads/TaiLieuKham/"), uniqueFileName);
+
+                    fileUpload.SaveAs(path);
+
+                    var taiLieu = new TaiLieuKham();
+                    taiLieu.MaLanKham = maLanKham;
+                    taiLieu.TenTaiLieu = string.IsNullOrEmpty(tenTaiLieu) ? fileName : tenTaiLieu;
+                    taiLieu.LoaiFile = Path.GetExtension(fileUpload.FileName);
+                    taiLieu.DuongDanFile = "/Content/Uploads/TaiLieuKham/" + uniqueFileName;
+                    taiLieu.NgayUpload = DateTime.Now;
+
+                    db.TaiLieuKham.Add(taiLieu);
+                    db.SaveChanges();
+
+                    TempData["SuccessMessage"] = "Tải tài liệu lên thành công!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "Lỗi upload: " + ex.Message;
+                }
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Vui lòng chọn file để tải lên.";
+            }
+
+            return RedirectToAction("ChiTietLanKham", new { id = maLanKham });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult XoaTaiLieu(int maTaiLieu)
+        {
+            if (!KiemTraQuyen()) return RedirectToAction("Login", "Account");
+            int maHoSo = (int)Session["MaHoSo"];
+
+            var taiLieu = db.TaiLieuKham.Find(maTaiLieu);
+            if (taiLieu != null)
+            {
+                var lanKham = db.LanKham.FirstOrDefault(lk => lk.MaLanKham == taiLieu.MaLanKham && lk.MaHoSo == maHoSo);
+                if (lanKham != null)
+                {
+                    try
+                    {
+                        string fullPath = Server.MapPath("~" + taiLieu.DuongDanFile);
+                        if (System.IO.File.Exists(fullPath))
+                        {
+                            System.IO.File.Delete(fullPath);
+                        }
+
+                        db.TaiLieuKham.Remove(taiLieu);
+                        db.SaveChanges();
+                        TempData["SuccessMessage"] = "Đã xóa tài liệu.";
+                        return RedirectToAction("ChiTietLanKham", new { id = lanKham.MaLanKham });
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["ErrorMessage"] = "Lỗi khi xóa: " + ex.Message;
+                    }
+                }
+            }
+            return RedirectToAction("LichSuKhamBenh");
         }
     }
 }

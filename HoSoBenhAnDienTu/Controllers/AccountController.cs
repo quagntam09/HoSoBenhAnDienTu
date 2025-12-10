@@ -1,9 +1,7 @@
 ﻿using HoSoBenhAnDienTu.Models;
 using System;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Cryptography; 
-using System.Text;                  
+using System.Linq;              
 using System.Web.Mvc;
 
 namespace HoSoBenhAnDienTu.Controllers
@@ -12,18 +10,7 @@ namespace HoSoBenhAnDienTu.Controllers
     {
         HoSoSucKhoeCaNhan_FullEntities db = new HoSoSucKhoeCaNhan_FullEntities();
 
-        public static string GetMD5(string str)
-        {
-            MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] fromData = Encoding.UTF8.GetBytes(str);
-            byte[] targetData = md5.ComputeHash(fromData);
-            StringBuilder byte2String = new StringBuilder();
-            for (int i = 0; i < targetData.Length; i++)
-            {
-                byte2String.Append(targetData[i].ToString("x2"));
-            }
-            return byte2String.ToString();
-        }
+        
 
         [HttpGet]
         public ActionResult Login()
@@ -34,9 +21,8 @@ namespace HoSoBenhAnDienTu.Controllers
         [HttpPost]
         public ActionResult Login(string username, string password)
         {
-            string f_password = GetMD5(password);
 
-            var user = db.TaiKhoan.FirstOrDefault(u => u.TenDangNhap == username && u.MatKhauHash == f_password);
+            var user = db.TaiKhoan.FirstOrDefault(u => u.TenDangNhap == username && u.MatKhauHash == password);
             if (user != null && user.TrangThai == true)
             {
                 Session["UserID"] = user.MaTaiKhoan;
@@ -76,13 +62,13 @@ namespace HoSoBenhAnDienTu.Controllers
             {
                 try
                 {
-                    string passwordHash = GetMD5(model.MatKhau);
+                   
 
                     var result = db.Database.SqlQuery<RegisterResult>(
                         "Proc_DangKyTaiKhoan @TenDangNhap, @MatKhauHash, @Email, @HoTen, @NgaySinh, @GioiTinh, @SoDienThoai, @NhomMau, @ChieuCao, @CanNang",
 
                         new SqlParameter("@TenDangNhap", model.TenDangNhap),
-                        new SqlParameter("@MatKhauHash", passwordHash), 
+                        new SqlParameter("@MatKhauHash", model.MatKhau), 
                         new SqlParameter("@Email", model.Email),
                         new SqlParameter("@HoTen", model.HoTen),
                         new SqlParameter("@NgaySinh", model.NgaySinh),

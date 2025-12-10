@@ -109,6 +109,21 @@
 </style>
 
 <div class="container py-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     @if (Model.CanhBao != null)
     {
         <div class="alert alert-danger shadow-sm border-0 mb-4 rounded-3" role="alert">
@@ -253,8 +268,11 @@
             <div class="row g-4">
                 <div class="col-md-12">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white fw-bold text-danger border-bottom-0 pt-3">
-                            <i class="fas fa-allergies me-2"></i>THÔNG TIN DỊ ỨNG
+                        <div class="card-header bg-white fw-bold text-danger border-bottom-0 pt-3 d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-allergies me-2"></i>THÔNG TIN DỊ ỨNG</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#modalDiUng">
+                                <i class="fas fa-plus me-1"></i> Thêm mới
+                            </button>
                         </div>
                         <div class="card-body pt-0">
                             @if (Model.HoSo.DiUng != null && Model.HoSo.DiUng.Count > 0)
@@ -285,8 +303,11 @@
 
                 <div class="col-md-12">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white fw-bold text-warning border-bottom-0 pt-3" style="color: #ff9800 !important;">
-                            <i class="fas fa-notes-medical me-2"></i>TIỀN SỬ GIA ĐÌNH
+                        <div class="card-header bg-white fw-bold text-warning border-bottom-0 pt-3 d-flex justify-content-between align-items-center" style="color: #ff9800 !important;">
+                            <span><i class="fas fa-notes-medical me-2"></i>TIỀN SỬ GIA ĐÌNH</span>
+                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#modalGiaDinh">
+                                <i class="fas fa-plus me-1"></i> Thêm mới
+                            </button>
                         </div>
                         <div class="card-body pt-0">
                             @if (Model.HoSo.TienSuGiaDinh != null && Model.HoSo.TienSuGiaDinh.Count > 0)
@@ -308,6 +329,81 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDiUng" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("ThemMoiDiUng", "BenhNhan")" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Thêm Dị ứng mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tác nhân gây dị ứng <span class="text-danger">*</span></label>
+                        <input type="text" name="TacNhan" class="form-control" placeholder="Ví dụ: Hải sản, Phấn hoa, Penicillin..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mức độ</label>
+                        <select name="MucDo" class="form-select">
+                            <option value="Nhẹ">Nhẹ</option>
+                            <option value="Trung bình">Trung bình</option>
+                            <option value="Nặng">Nặng</option>
+                            <option value="Nghiêm trọng (Sốc phản vệ)">Nghiêm trọng (Sốc phản vệ)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Biểu hiện</label>
+                        <input type="text" name="BieuHien" class="form-control" placeholder="Ví dụ: Nổi mề đay, khó thở...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalGiaDinh" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("ThemMoiTienSuGiaDinh", "BenhNhan")" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Thêm Tiền sử Gia đình</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mối quan hệ <span class="text-danger">*</span></label>
+                        <select name="MoiQuanHe" class="form-select" required>
+                            <option value="">-- Chọn mối quan hệ --</option>
+                            <option value="Bố">Bố</option>
+                            <option value="Mẹ">Mẹ</option>
+                            <option value="Ông/Bà">Ông/Bà</option>
+                            <option value="Anh/Chị/Em ruột">Anh/Chị/Em ruột</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên bệnh <span class="text-danger">*</span></label>
+                        <input type="text" name="TenBenh" class="form-control" placeholder="Ví dụ: Cao huyết áp, Tiểu đường..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú thêm</label>
+                        <textarea name="GhiChu" class="form-control" rows="2" placeholder="Chi tiết thêm (nếu có)"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning text-dark font-weight-bold">Lưu thông tin</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

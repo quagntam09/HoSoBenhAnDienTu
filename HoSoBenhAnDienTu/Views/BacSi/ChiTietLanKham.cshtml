@@ -1,0 +1,192 @@
+﻿@using HoSoBenhAnDienTu.Models
+@model LanKham
+
+@{
+    ViewBag.Title = "Chi tiết lần khám";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var chiSo = ViewBag.ChiSo as ChiSoKham;
+    var donThuoc = ViewBag.DonThuoc as List<DonThuoc>;
+    var taiLieu = ViewBag.TaiLieu as List<TaiLieuKham>;
+    var benhNhan = ViewBag.BenhNhan as HoSoNguoiDung;
+}
+
+<div class="container py-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h5 class="text-muted mb-1">Chi tiết lần khám cho bệnh nhân: <strong class="text-dark">@benhNhan.HoTen</strong></h5>
+            <h2 class="text-primary fw-bold"><i class="far fa-calendar-alt me-2"></i>@Model.NgayKham.ToString("dd/MM/yyyy")</h2>
+        </div>
+        <a href="@Url.Action("LichSuKhamBenh", "BacSi", new { id = Model.MaHoSo })" class="btn btn-outline-secondary">
+            <i class="fas fa-chevron-left me-2"></i>Quay lại lịch sử
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 border-start border-5 border-primary">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1">Nơi khám</p>
+                            <h5 class="fw-bold">@Model.NoiKham</h5>
+                        </div>
+                        <div class="col-md-8">
+                            <p class="text-muted mb-1">Chẩn đoán</p>
+                            <h4 class="text-danger fw-bold">@Model.ChanDoanChinh</h4>
+                            <p class="mb-0 mt-2"><strong>Lời dặn:</strong> @Model.LoiDanBacSi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <h5 class="fw-bold text-success mb-3"><i class="fas fa-heartbeat me-2"></i>Chỉ số sinh tồn</h5>
+            @if (chiSo != null)
+            {
+                <div class="row g-3">
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white rounded shadow-sm border text-center">
+                            <div class="text-muted small">Huyết áp</div>
+                            <div class="fw-bold fs-4 text-danger">@chiSo.HuyetApTamThu / @chiSo.HuyetApTamTruong</div>
+                            <small>mmHg</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white rounded shadow-sm border text-center">
+                            <div class="text-muted small">Nhịp tim</div>
+                            <div class="fw-bold fs-4 text-primary">@chiSo.NhipTim</div>
+                            <small>bpm</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white rounded shadow-sm border text-center">
+                            <div class="text-muted small">Nhiệt độ</div>
+                            <div class="fw-bold fs-4 text-warning">@chiSo.NhietDo</div>
+                            <small>&deg;C</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="p-3 bg-white rounded shadow-sm border text-center">
+                            <div class="text-muted small">Cân nặng</div>
+                            <div class="fw-bold fs-4 text-success">@chiSo.CanNang</div>
+                            <small>kg</small>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted fst-italic">Không có dữ liệu chỉ số.</p>
+            }
+        </div>
+
+        <div class="col-lg-8">
+            <h5 class="fw-bold text-primary mb-3"><i class="fas fa-pills me-2"></i>Đơn thuốc</h5>
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-3">Tên thuốc</th>
+                                <th>SL</th>
+                                <th>Cách dùng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (donThuoc != null && donThuoc.Any())
+                            {
+                                foreach (var t in donThuoc)
+                                {
+                                    <tr>
+                                        <td class="ps-3 fw-bold text-primary">@t.TenThuoc <small class="text-muted fw-normal">(@t.HamLuong)</small></td>
+                                        <td>@t.SoLuong @t.DonViTinh</td>
+                                        <td>@t.CachDung</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="3" class="text-center py-3 text-muted">Không có thuốc</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-warning mb-0"><i class="fas fa-folder-open me-2"></i>Tài liệu</h5>
+                <button class="btn btn-sm btn-warning fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#modalUploadBS">
+                    <i class="fas fa-plus me-1"></i>Thêm
+                </button>
+            </div>
+
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body p-2">
+                    @if (taiLieu != null && taiLieu.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var tl in taiLieu)
+                            {
+                                <div class="list-group-item d-flex align-items-center justify-content-between p-2 mb-1 border rounded">
+                                    <a href="@tl.DuongDanFile" target="_blank" class="text-decoration-none text-dark d-flex align-items-center text-truncate" style="max-width: 85%;">
+                                        <i class="fas fa-file-alt me-2 text-secondary"></i>
+                                        <span class="text-truncate fw-bold">@tl.TenTaiLieu</span>
+                                    </a>
+                                    <form action="@Url.Action("XoaTaiLieuBacSi", "BacSi")" method="post" onsubmit="return confirm('Xóa tài liệu này?')">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="maTaiLieu" value="@tl.MaTaiLieu" />
+                                        <button type="submit" class="btn btn-link text-danger p-0"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-3 small">Chưa có tài liệu.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalUploadBS" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("UploadTaiLieuBacSi", "BacSi")" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="maLanKham" value="@Model.MaLanKham" />
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title fw-bold">Thêm tài liệu khám</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên tài liệu</label>
+                        <input type="text" name="tenTaiLieu" class="form-control" required placeholder="Vd: X-Quang phổi...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">File đính kèm</label>
+                        <input type="file" name="fileUpload" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Tải lên</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

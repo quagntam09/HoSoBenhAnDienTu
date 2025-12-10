@@ -5,13 +5,28 @@
     ViewBag.Title = "Chi tiết đợt khám";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Lấy dữ liệu từ ViewBag truyền qua Controller
+    // Lấy dữ liệu từ ViewBag
     var chiSo = ViewBag.ChiSo as ChiSoKham;
     var donThuoc = ViewBag.DonThuoc as List<DonThuoc>;
     var taiLieu = ViewBag.TaiLieu as List<TaiLieuKham>;
 }
 
 <div class="container py-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <h4 class="text-muted mb-0">Chi tiết lần khám ngày</h4>
@@ -136,7 +151,13 @@
         </div>
 
         <div class="col-lg-4">
-            <h5 class="fw-bold mb-3 border-start border-4 border-warning ps-2 text-warning">Kết quả Cận lâm sàng</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold border-start border-4 border-warning ps-2 text-warning mb-0">Tài liệu & Kết quả</h5>
+                <button class="btn btn-sm btn-warning text-dark fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#modalUpload">
+                    <i class="fas fa-upload me-1"></i> Tải lên
+                </button>
+            </div>
+
             <div class="card shadow-sm border-0 bg-light">
                 <div class="card-body">
                     @if (taiLieu != null && taiLieu.Count > 0)
@@ -144,33 +165,74 @@
                         <div class="list-group">
                             @foreach (var file in taiLieu)
                             {
-                                <a href="@file.DuongDanFile" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center p-3 mb-2 rounded border">
+                                <div class="list-group-item list-group-item-action d-flex align-items-center p-2 mb-2 rounded border bg-white">
                                     <div class="fs-2 me-3 text-secondary">
-                                        @if (file.LoaiFile != null && file.LoaiFile.Contains("Image"))
+                                        @if (file.LoaiFile != null && file.LoaiFile.ToLower().Contains("jpg") || file.LoaiFile.ToLower().Contains("png"))
                                         {<i class="fas fa-file-image text-success"></i> }
-                                        else if (file.LoaiFile != null && file.LoaiFile.Contains("PDF"))
+                                        else if (file.LoaiFile != null && file.LoaiFile.ToLower().Contains("pdf"))
                                         { <i class="fas fa-file-pdf text-danger"></i> }
                                         else
                                         { <i class="fas fa-file-alt"></i>}
                                     </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-0 fw-bold">@file.TenTaiLieu</h6>
-                                        <small class="text-muted">Nhấn để xem chi tiết</small>
+
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <a href="@file.DuongDanFile" target="_blank" class="text-decoration-none text-dark fw-bold d-block text-truncate" title="@file.TenTaiLieu">
+                                            @file.TenTaiLieu
+                                        </a>
+                                        <small class="text-muted" style="font-size: 0.75rem;">@file.NgayUpload.Value.ToString("dd/MM/yyyy HH:mm")</small>
                                     </div>
-                                    <i class="fas fa-external-link-alt text-muted"></i>
-                                </a>
+
+                                    <form action="@Url.Action("XoaTaiLieu", "BenhNhan")" method="post" class="ms-2" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài liệu này?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="maTaiLieu" value="@file.MaTaiLieu" />
+                                        <button type="submit" class="btn btn-sm text-danger" title="Xóa tài liệu">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             }
                         </div>
                     }
                     else
                     {
                         <div class="text-center py-4">
-                            <i class="fas fa-file-medical-alt fs-1 text-muted opacity-25 mb-2"></i>
-                            <p class="text-muted small">Không có tài liệu đính kèm (X-Quang, Xét nghiệm...).</p>
+                            <i class="fas fa-cloud-upload-alt fs-1 text-muted opacity-25 mb-2"></i>
+                            <p class="text-muted small">Chưa có tài liệu nào.<br>Nhấn "Tải lên" để thêm X-Quang, Xét nghiệm...</p>
                         </div>
                     }
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalUpload" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("UploadTaiLieu", "BenhNhan")" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="maLanKham" value="@Model.MaLanKham" />
+
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-cloud-upload-alt"></i> Tải tài liệu lên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên tài liệu <span class="text-danger">*</span></label>
+                        <input type="text" name="tenTaiLieu" class="form-control" placeholder="Vd: Kết quả xét nghiệm máu, X-Quang..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Chọn file <span class="text-danger">*</span></label>
+                        <input type="file" name="fileUpload" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" required>
+                        <div class="form-text">Hỗ trợ ảnh (JPG, PNG) và văn bản (PDF, Word).</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning fw-bold">Lưu tài liệu</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

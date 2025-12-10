@@ -1,8 +1,10 @@
-﻿using System;
+﻿using HoSoBenhAnDienTu.Models;
+using System;
+using System.IO;
 using System.Linq;
-using System.Web.Mvc;
-using HoSoBenhAnDienTu.Models;
 using System.Transactions;
+using System.Web;
+using System.Web.Mvc;
 
 namespace HoSoBenhAnDienTu.Controllers
 {
@@ -11,10 +13,54 @@ namespace HoSoBenhAnDienTu.Controllers
         
         HoSoSucKhoeCaNhan_FullEntities db = new HoSoSucKhoeCaNhan_FullEntities();
 
-        public ActionResult DanhSachBenhNhan()
+
+        public ActionResult DanhSachBenhNhan(string searchString, string sortOrder, string filterGender)
         {
             if (Session["RoleID"]?.ToString() != "1") return RedirectToAction("Login", "Account");
-            return View(db.HoSoNguoiDung.ToList());
+
+            var patients = db.HoSoNguoiDung.AsQueryable();
+
+            ViewBag.CurrentFilter = searchString;
+            ViewBag.CurrentGender = filterGender;
+            ViewBag.CurrentSort = sortOrder;
+
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.AgeSortParm = sortOrder == "Age" ? "age_desc" : "Age";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                patients = patients.Where(s => s.HoTen.Contains(searchString) || s.MaHoSo.ToString().Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(filterGender))
+            {
+                patients = patients.Where(s => s.GioiTinh == filterGender);
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    patients = patients.OrderByDescending(s => s.HoTen);
+                    break;
+                case "Age": 
+                    patients = patients.OrderBy(s => s.NgaySinh);
+                    break;
+                case "age_desc":
+                    patients = patients.OrderByDescending(s => s.NgaySinh);
+                    break;
+                case "Date":
+                    patients = patients.OrderBy(s => s.LanKham.Max(lk => lk.NgayKham));
+                    break;
+                case "date_desc": 
+                    patients = patients.OrderByDescending(s => s.LanKham.Max(lk => lk.NgayKham));
+                    break;
+                default: 
+                    patients = patients.OrderBy(s => s.HoTen);
+                    break;
+            }
+
+            return View(patients.ToList());
         }
 
         public ActionResult TheoDoiSucKhoe(int id)
@@ -181,6 +227,111 @@ namespace HoSoBenhAnDienTu.Controllers
             }
 
             return RedirectToAction("KhamBenh", new { id = maHoSo });
+        }
+        
+        public ActionResult LichSuKhamBenh(int id)
+        {
+            if (Session["RoleID"]?.ToString() != "1") return RedirectToAction("Login", "Account");
+
+            var benhNhan = db.HoSoNguoiDung.Find(id);
+            if (benhNhan == null) return HttpNotFound();
+
+            var lichSu = db.LanKham
+                           .Where(lk => lk.MaHoSo == id)
+                           .OrderByDescending(lk => lk.NgayKham)
+                           .ToList();
+
+            ViewBag.BenhNhan = benhNhan;
+            return View(lichSu);
+        }
+
+        public ActionResult ChiTietLanKham(int id)
+        {
+            if (Session["RoleID"]?.ToString() != "1") return RedirectToAction("Login", "Account");
+
+            var lanKham = db.LanKham.Find(id);
+            if (lanKham == null) return HttpNotFound();
+
+            ViewBag.ChiSo = db.ChiSoKham.FirstOrDefault(x => x.MaLanKham == id);
+            ViewBag.DonThuoc = db.DonThuoc.Where(x => x.MaLanKham == id).ToList();
+            ViewBag.TaiLieu = db.TaiLieuKham.Where(x => x.MaLanKham == id).ToList();
+            ViewBag.BenhNhan = db.HoSoNguoiDung.Find(lanKham.MaHoSo);
+
+            return View(lanKham);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UploadTaiLieuBacSi(int maLanKham, HttpPostedFileBase fileUpload, string tenTaiLieu)
+        {
+            if (Session["RoleID"]?.ToString() != "1") return RedirectToAction("Login", "Account");
+
+            if (fileUpload != null && fileUpload.ContentLength > 0)
+            {
+                try
+                {
+                    string fileName = System.IO.Path.GetFileName(fileUpload.FileName);
+                    string uniqueFileName = "BS_" + DateTime.Now.Ticks + "_" + fileName;
+                    string path = System.IO.Path.Combine(Server.MapPath("~/Content/Uploads/TaiLieuKham/"), uniqueFileName);
+                    fileUpload.SaveAs(path);
+
+                    var taiLieu = new TaiLieuKham();
+                    taiLieu.MaLanKham = maLanKham;
+                    taiLieu.TenTaiLieu = string.IsNullOrEmpty(tenTaiLieu) ? fileName : tenTaiLieu;
+                    taiLieu.LoaiFile = System.IO.Path.GetExtension(fileUpload.FileName);
+                    taiLieu.DuongDanFile = "/Content/Uploads/TaiLieuKham/" + uniqueFileName;
+                    taiLieu.NgayUpload = DateTime.Now;
+
+                    db.TaiLieuKham.Add(taiLieu);
+                    db.SaveChanges();
+                    TempData["Success"] = "Đã thêm tài liệu thành công!";
+                }
+                catch (Exception ex) { TempData["Error"] = "Lỗi: " + ex.Message; }
+            }
+            return RedirectToAction("ChiTietLanKham", new { id = maLanKham });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult XoaTaiLieuBacSi(int maTaiLieu)
+        {
+            if (Session["RoleID"]?.ToString() != "1") return RedirectToAction("Login", "Account");
+
+            var taiLieu = db.TaiLieuKham.Find(maTaiLieu);
+            if (taiLieu != null)
+            {
+                int maLanKham = taiLieu.MaLanKham ?? 0;
+                try
+                {
+                    string fullPath = Server.MapPath("~" + taiLieu.DuongDanFile);
+                    if (System.IO.File.Exists(fullPath)) System.IO.File.Delete(fullPath);
+
+                    db.TaiLieuKham.Remove(taiLieu);
+                    db.SaveChanges();
+                    TempData["Success"] = "Đã xóa tài liệu.";
+                }
+                catch { }
+
+                if (maLanKham > 0) return RedirectToAction("ChiTietLanKham", new { id = maLanKham });
+            }
+            return RedirectToAction("DanhSachBenhNhan");
+        }
+
+        public ActionResult XemNhatKy(int id)
+        {
+            if (Session["RoleID"]?.ToString() != "1") return RedirectToAction("Login", "Account");
+
+            var benhNhan = db.HoSoNguoiDung.Find(id);
+            if (benhNhan == null) return HttpNotFound();
+
+            var nhatKy = db.NhatKySucKhoe
+                           .Where(nk => nk.MaHoSo == id)
+                           .OrderByDescending(nk => nk.NgayGhi)
+                           .ToList();
+
+            ViewBag.BenhNhan = benhNhan;
+            return View(nhatKy);
         }
     }
 }

@@ -292,9 +292,13 @@
     <Content Include="Views\BenhNhan\BieuDoSucKhoe.cshtml" />
     <Content Include="Views\BacSi\KhamBenh.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\BacSi\ChiTietLanKham.cshtml" />
+    <Content Include="Views\BacSi\LichSuKhamBenh.cshtml" />
+    <Content Include="Views\BacSi\XemNhatKy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Uploads\TaiLieuKham\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
